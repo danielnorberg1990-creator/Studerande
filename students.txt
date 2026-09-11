@@ -1,0 +1,4 @@
+Studerande:
+----------------------------------------
+Alice Smith | 25 år | Kurser: Server
+Bob Jones | 30 år | Kurser: Ingen kurs

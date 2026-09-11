@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
+
 using System.Text;
 
 // Course
@@ -119,10 +122,11 @@ class Program
             return;
         }
 
+                Console.Write("Ålder: ");
         int age = 0;
         while (!int.TryParse(Console.ReadLine(), out age) || age < 0)
         {
-            Console.Write("Ålder (felaktig värde, försök igen): ");
+            Console.Write("Ålder (felaktigt värde, försök igen): ");
         }
 
         students.Add(new Student(firstName, lastName, age));
@@ -156,7 +160,7 @@ class Program
             Console.WriteLine($"  {i + 1}. {students[i].FullName} ({students[i].Age} år)");
         }
 
-        return PickFromList(students.Count, "Välj studerande: ");
+        return PickFromList(students, "Välj studerande: ");
     }
 
     // Låter användaren välja en kurs ur listan.
@@ -168,32 +172,21 @@ class Program
             Console.WriteLine($"  {i + 1}. {courses[i]}");
         }
 
-        return PickFromList(courses.Count, "Välj kurs: ");
+        return PickFromList(courses, "Välj kurs: ");
     }
 
-    // Hjälpmetod: läser in ett giltigt listval och returnerar objektet.
-    static T PickFromList<T>(int count, string prompt)
-    {
-        Console.Write(prompt);
-        while (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > count)
+        // Hjälpmetod: läser in ett giltigt listval och returnerar objektet från listan.
+        static T PickFromList<T>(List<T> items, string prompt)
         {
-            Console.Write($"Ogiltigt val. Välj 1-{count}: ");
+            int count = items.Count;
+            int choice;
+            Console.Write(prompt);
+            while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > count)
+            {
+                Console.Write($"Ogiltigt val. Välj 1-{count}: ");
+            }
+            return items[choice - 1];
         }
-        return (T)PickFromListHelper(count, choice);
-    }
-
-    // Inre hjälpare — returnerar objektet för valt index.
-    static object PickFromListHelper(int count, int choice)
-    {
-        // Användaren väljer alltid antingen en studerande eller en kurs,
-        // så vi returnerar rätt typ beroende på listans innehåll.
-        int index = choice - 1;
-        if (students.Count == count && index < students.Count && !(students[index] is null) && courses.Count != count || courses.Count == count)
-        {
-            // (kodsäkerhet: vi skickar alltid rätt lista ned till den här metoden)
-        }
-        return null;
-    }
 
     // Visar alla kurser med röstlapp.
     static void ShowCourses()
