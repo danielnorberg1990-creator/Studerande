@@ -1,4 +1,5 @@
 Studerande:
 ----------------------------------------
-Alice Smith | 25 år | Kurser: Server
-Bob Jones | 30 år | Kurser: Ingen kurs
+Kalle Andersson | 27 år | Kurser: Server och virtualiseringsspecialist
+Anna Karlsson | 20 år | Kurser: Ingen kurs
+Bertil Nilsson | 55 år | Kurser: Ingen kurs

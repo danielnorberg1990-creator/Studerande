@@ -1,3 +1,5 @@
 Kurser/utbildningar:
 ----------------------------------------
-Server | Platser: 1/5 | Deltagare: Alice Smith
+Server och virtualiseringsspecialist | Platser: 1/25 | Deltagare: Kalle Andersson
+Programmering | Platser: 0/15 | Deltagare: Inga deltagare
+Designer | Platser: 0/10 | Deltagare: Inga deltagare
