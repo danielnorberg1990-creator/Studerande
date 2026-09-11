@@ -1,5 +1,5 @@
 Kurser/utbildningar:
 ----------------------------------------
-Server och virtualiseringsspecialist | Platser: 1/25 | Deltagare: Kalle Andersson
-Programmering | Platser: 0/15 | Deltagare: Inga deltagare
-Designer | Platser: 0/10 | Deltagare: Inga deltagare
+Server & virtualisering | Platser: 1/15 | Deltagare: Anna Andersson
+Programmering | Platser: 2/10 | Deltagare: Anna Andersson, Bertil Jönsson
+Webbdesign | Platser: 2/25 | Deltagare: Anna Eriksson, Anna Andersson

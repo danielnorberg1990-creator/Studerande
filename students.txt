@@ -1,5 +1,6 @@
 Studerande:
 ----------------------------------------
-Kalle Andersson | 27 år | Kurser: Server och virtualiseringsspecialist
-Anna Karlsson | 20 år | Kurser: Ingen kurs
-Bertil Nilsson | 55 år | Kurser: Ingen kurs
+Anna Andersson | 27 år | Kurser: Programmering, Server & virtualisering, Webbdesign
+Kalle Karlsson | 43 år | Kurser: Ingen kurs
+Anna Eriksson | 23 år | Kurser: Webbdesign
+Bertil Jönsson | 56 år | Kurser: Programmering

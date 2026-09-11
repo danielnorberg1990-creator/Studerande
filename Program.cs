@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
-
 using System.Text;
 
 // Course
@@ -48,14 +46,17 @@ class Program
                 case "5":
                     ShowStudents();
                     break;
-                case "6":
+                                case "6":
                     SaveToFile();
+                    break;
+                case "7":
+                    RemoveStudentFromCourse();
                     break;
                 case "0":
                     exit = true;
                     break;
                 default:
-                    Console.WriteLine("Ogiltigt val. Välj ett nummer mellan 0 och 6.");
+                    Console.WriteLine("Ogiltigt val. Välj ett nummer mellan 0 och 7.");
                     break;
             }
         }
@@ -72,6 +73,7 @@ class Program
         Console.WriteLine("4. Visa alla kurser");
         Console.WriteLine("5. Visa alla studerande");
         Console.WriteLine("6. Spara listor till .txt-filer");
+        Console.WriteLine("7. Ta bort en studerande från en kurs");
         Console.WriteLine("0. Avsluta");
         Console.Write("Välj: ");
     }
@@ -149,6 +151,44 @@ class Program
         if (course == null) return;
 
         student.Join(course); // Enroll hanterar dubbelanmälan och full kurs
+    }
+
+    // Låter användaren ta bort en studerande från en kurs.
+    static void RemoveStudentFromCourse()
+    {
+        if (students.Count == 0 || courses.Count == 0)
+        {
+            Console.WriteLine("[Fel] Du behöver minst en studerande och en kurs först.");
+            return;
+        }
+
+        Course course = PickCourseWithStudents();
+        if (course == null) return;
+
+        Student student = PickFromList(course.Students, "Välj studerande att ta bort: ");
+
+        student.Leave(course); // Remove tar bort från både kursen och studerandens schema
+        Console.WriteLine($"{student.FullName} har tagits bort från {course.Name}.");
+    }
+
+    // Låter användaren välja en kurs som har minst en anmäld studerande.
+    static Course PickCourseWithStudents()
+    {
+        List<Course> coursesWithStudents = courses.Where(c => c.Students.Count > 0).ToList();
+
+        if (coursesWithStudents.Count == 0)
+        {
+            Console.WriteLine("[Fel] Inga kurser har några anmälda studerande.");
+            return null;
+        }
+
+        Console.WriteLine("Kurser med anmälda studerande:");
+        for (int i = 0; i < coursesWithStudents.Count; i++)
+        {
+            Console.WriteLine($"  {i + 1}. {coursesWithStudents[i]}");
+        }
+
+        return PickFromList(coursesWithStudents, "Välj kurs: ");
     }
 
     // Låter användaren välja en studerande ur listan.
