@@ -1,5 +1,6 @@
 Kurser/utbildningar:
 ----------------------------------------
-Server & virtualisering | Platser: 1/15 | Deltagare: Anna Andersson
+Server & virtualisering | Platser: 2/15 | Deltagare: Anna Andersson, Bertil Jönsson
 Programmering | Platser: 2/10 | Deltagare: Anna Andersson, Bertil Jönsson
-Webbdesign | Platser: 2/25 | Deltagare: Anna Eriksson, Anna Andersson
+Webbdesign | Platser: 2/25 | Deltagare: Anna Andersson, Anna Eriksson
+Mjukvara | Platser: 0/5 | Deltagare: Inga deltagare

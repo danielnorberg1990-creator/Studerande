@@ -21,8 +21,10 @@ class Program
     static List<Course> courses = new List<Course>();
     static List<Student> students = new List<Student>();
 
-    static void Main()
+        static void Main()
     {
+        LoadFromFiles(); // Hämtar upp kurslista och studentlista ur .txt-filerna om de finns.
+
         bool exit = false;
         while (!exit)
         {
@@ -301,7 +303,100 @@ class Program
             sb.AppendLine($"{course.Name} | Platser: {course.Students.Count}/{course.MaxSeats} | Deltagare: {deltagare}");
         }
 
-        File.WriteAllText(path, sb.ToString());
+                File.WriteAllText(path, sb.ToString());
         Console.WriteLine($"Kurslista sparad till {path} ({courses.Count} st).");
+    }
+
+    // Laddar upp kurslista och studentlista ur .txt-filerna när programmet startar.
+    static void LoadFromFiles()
+    {
+        LoadCourses();
+        LoadStudents();
+
+        if (courses.Count == 0 && students.Count == 0)
+        {
+            Console.WriteLine("Inga filer hittades – programmet startar tomt.");
+        }
+        else
+        {
+            Console.WriteLine($"Laddade {courses.Count} kurser och {students.Count} studerande från filerna.");
+        }
+    }
+
+    // Läser kurslistan från courses.txt.
+    // Radformat: "Kursnamn | Platser: antal/max | Deltagare: ..."
+    static void LoadCourses()
+    {
+        string path = "courses.txt";
+        if (!File.Exists(path)) return;
+
+        string[] lines = File.ReadAllLines(path);
+        foreach (string line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("---")) continue;
+
+            string[] parts = line.Split('|');
+            if (parts.Length < 2) continue;
+
+            string name = parts[0].Trim();
+
+            // Hämta max antal platser ur "Platser: x/y"
+            string info = parts[1].Trim();
+            if (!info.Contains("Platser:")) continue;
+
+            string[] seatParts = info.Split(new[] { "Platser:", "/" }, StringSplitOptions.RemoveEmptyEntries);
+            if (seatParts.Length < 2 || !int.TryParse(seatParts[1].Trim(), out int maxSeats)) continue;
+
+            courses.Add(new Course(name, maxSeats));
+        }
+    }
+
+    // Läser studentlistan från students.txt och återställer deras anmälningar.
+    // Radformat: "Förnamn Efternamn | ålder år | Kurser: kurs1, kurs2"
+    static void LoadStudents()
+    {
+        string path = "students.txt";
+        if (!File.Exists(path)) return;
+
+        string[] lines = File.ReadAllLines(path);
+        foreach (string line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("---")) continue;
+
+            string[] parts = line.Split('|');
+            if (parts.Length < 2) continue;
+
+            // Namnet kan innehålla mellanslag, så dela vid sista mellanslaget.
+            string name = parts[0].Trim();
+            int lastSpace = name.LastIndexOf(' ');
+            if (lastSpace <= 0) continue;
+
+            string firstName = name.Substring(0, lastSpace).Trim();
+            string lastName = name.Substring(lastSpace + 1).Trim();
+
+            // Hämta åldern ur "xx år"
+            if (!int.TryParse(parts[1].Trim().Replace("år", "").Trim(), out int age)) continue;
+
+            Student student = new Student(firstName, lastName, age);
+            students.Add(student);
+
+            // Återställ anmälningarna om fältet "Kurser: ..." finns.
+            if (parts.Length >= 3 && parts[2].Contains("Kurser:"))
+            {
+                string kursarText = parts[2].Replace("Kurser:", "").Trim();
+                if (kursarText != "Ingen kurs" && kursarText.Length > 0)
+                {
+                    foreach (string kursNamn in kursarText.Split(','))
+                    {
+                        string kurs = kursNamn.Trim();
+                        Course course = courses.FirstOrDefault(c => c.Name == kurs);
+                        if (course != null)
+                        {
+                            student.Join(course);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
