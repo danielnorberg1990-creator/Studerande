@@ -9,7 +9,8 @@ public class Course
     public int MaxSeats { get; set; }
     public List<Student> Students { get; set; }
 
-    public Course(string name, int maxSeats)
+    // Kursen kan skapas med bara ett namn — antalet platser har då ett standardvärde.
+    public Course(string name, int maxSeats = 10)
     {
         Name = name;
         MaxSeats = maxSeats;
@@ -22,7 +23,7 @@ public class Course
         // Felhantering: samma studerande kan inte anmäla sig flera gånger till samma kurs.
         if (Students.Contains(student))
         {
-            Console.WriteLine($"  [Fel] {student.Name} är redan anmäld till {Name}.");
+            Console.WriteLine($"  [Fel] {student.FullName} är redan anmäld till {Name}.");
             return false;
         }
 
@@ -59,7 +60,7 @@ public class Course
 
         foreach (var student in Students)
         {
-            Console.WriteLine($"  {student.Name}");
+            Console.WriteLine($"  {student.FullName} ({student.Age} år)");
         }
     }
 
@@ -69,3 +70,4 @@ public class Course
         return $"{Name} ({Students.Count}/{MaxSeats} platser)";
     }
 }
+

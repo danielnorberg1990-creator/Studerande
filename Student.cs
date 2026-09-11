@@ -6,11 +6,17 @@ public class Student
 {
     // Fält: namn och lista av kurser.
     public string Name { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
     public List<Course> Courses { get; set; }
 
-    public Student(string name)
+    public Student(string firstName, string lastName, int age)
     {
-        Name = name;
+        FirstName = firstName;
+        LastName = lastName;
+        Age = age;
+        Name = $"{firstName} {lastName}";
         Courses = new List<Course>();
     }
 
@@ -47,4 +53,8 @@ public class Student
     {
         return Name;
     }
+
+    // Fullständigt namn (förnamn + efternamn).
+    public string FullName => $"{FirstName} {LastName}";
 }
+
