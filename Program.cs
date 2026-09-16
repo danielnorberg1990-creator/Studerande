@@ -48,7 +48,7 @@ class Program
                 case "5":
                     ShowStudents();
                     break;
-                                case "6":
+                case "6":
                     SaveToFile();
                     break;
                 case "7":
