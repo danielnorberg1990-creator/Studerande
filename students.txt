@@ -1,7 +1,7 @@
 Studerande:
 ----------------------------------------
-Anna Andersson | 27 år | Kurser: Programmering, Server & virtualisering, Webbdesign
+Anna Andersson | 27 år | Kurser: Ingen kurs
 Kalle Karlsson | 43 år | Kurser: Ingen kurs
-Anna Eriksson | 23 år | Kurser: Webbdesign
-Bertil Jönsson | 56 år | Kurser: Programmering, Server & virtualisering
+Anna Eriksson | 23 år | Kurser: Ingen kurs
+Bertil Jönsson | 56 år | Kurser: Ingen kurs
 Eva Lind | 40 år | Kurser: Ingen kurs
