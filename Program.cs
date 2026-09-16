@@ -156,6 +156,7 @@ class Program
     }
 
     // Låter användaren ta bort en studerande från en kurs.
+    // Låter användaren ta bort en studerande från en kurs.
     static void RemoveStudentFromCourse()
     {
         //Felhantering om ingen studerande eller kurs valts.
@@ -167,6 +168,13 @@ class Program
         // Återgå till menyn ifall felaktigt val gjorts.
         Course course = PickCourseWithStudents();
         if (course == null) return;
+
+        // Skriver ut namnen på de studerande som är anmälda till kursen, så användaren vet vilken siffra som hör till vilket namn.
+        Console.WriteLine($"Studerande anmälda till {course.Name}:");
+        for (int i = 0; i < course.Students.Count; i++)
+        {
+            Console.WriteLine($"  {i + 1}. {course.Students[i].FullName} ({course.Students[i].Age} år)");
+        }
 
         Student student = PickFromList(course.Students, "Välj studerande att ta bort: "); // man får menyval att kunna välja vilken studerande du vill ta bort från studerande.
 
