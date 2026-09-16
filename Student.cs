@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 
-// En studerande med ett namn och en lista med kurser/utbildningar hen går på.
+// En studerande med ett namn och en lista med kurser/utbildningar personen går på.
 public class Student
 {
-    // Fält: namn och lista av kurser.
+    // Fält: namn, ålder och lista av kurser.
     public string Name { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public int Age { get; set; }
     public List<Course> Courses { get; set; }
 
-    public Student(string firstName, string lastName, int age)
+    public Student(string firstName, string lastName, int age) // konstruktor för studerande
     {
         FirstName = firstName;
         LastName = lastName;
@@ -20,23 +20,24 @@ public class Student
         Courses = new List<Course>();
     }
 
-    // Metod Join(course) — går med i en kurs.
+    // Metod Join(course) — gå med i en kurs.
     public void Join(Course course)
     {
         course.Enroll(this);
     }
 
-    // Metod Leave(course) — lämnar en kurs.
+    // Metod Leave(course) — lämna en kurs.
     public void Leave(Course course)
     {
         course.Remove(this);
     }
 
-    // Metod Schedule() — skriver ut vilka kurser den studerande går.
+    // Metod Schedule() — skriver ut vilka kurser den studerande går i schema format.
     public void Schedule()
     {
         Console.WriteLine($"--- Schema för {Name} ---");
         if (Courses.Count == 0)
+        //Felhantering ifall den studerande inte har någon anmäld kurs.
         {
             Console.WriteLine("  (ingen kurs anmäld)");
             return;
@@ -44,7 +45,7 @@ public class Student
 
         foreach (var course in Courses)
         {
-            Console.WriteLine($"  {course.Name}");
+            Console.WriteLine($"  {course.Name}"); //Listar namnet på kurserna, en efter en.
         }
     }
 
