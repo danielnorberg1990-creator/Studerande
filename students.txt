@@ -1,8 +1,8 @@
 Studerande:
 ----------------------------------------
-Anna Andersson | 27 år | Kurser: Matematik 2
-Kalle Karlsson | 43 år | Kurser: Matematik 2
-Anna Eriksson | 23 år | Kurser: Matematik 2
-Bertil Jönsson | 56 år | Kurser: Ingen kurs
-Eva Lind | 40 år | Kurser: Matematik 2
+Anna Andersson | 27 år | Kurser: Geometri
+Kalle Karlsson | 43 år | Kurser: Matematik 2, Geometri
+Anna Eriksson | 23 år | Kurser: Matematik 2, Geometri
+Bertil Jönsson | 56 år | Kurser: Geometri
+Eva Lind | 40 år | Kurser: Matematik 2, Geometri
 Kjell Hansson | 34 år | Kurser: Server, Matematik 2

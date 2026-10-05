@@ -1,5 +1,6 @@
 Kurser/utbildningar:
 ----------------------------------------
 Matematik 1 | Platser: 0/25 | Deltagare: Inga deltagare
-Matematik 2 | Platser: 5/10 | Deltagare: Kalle Karlsson, Eva Lind, Anna Andersson, Anna Eriksson, Kjell Hansson
+Matematik 2 | Platser: 4/10 | Deltagare: Kalle Karlsson, Anna Eriksson, Eva Lind, Kjell Hansson
 Server | Platser: 1/12 | Deltagare: Kjell Hansson
+Geometri | Platser: 5/5 | Deltagare: Anna Andersson, Kalle Karlsson, Anna Eriksson, Bertil Jönsson, Eva Lind

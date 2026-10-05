@@ -9,7 +9,7 @@ public class Course
     public int MaxSeats { get; set; }
     public List<Student> Students { get; set; }
 
-    // Kursen skapas med ett namn — antalet platser har då ett standardvärde som i detta fallet är 10.
+    // Kursen skapas med ett namn — antalet platser har då ett standardvärde som i detta fallet är 10 om inget annat anges.
     public Course(string name, int maxSeats = 10)
     {
         Name = name;

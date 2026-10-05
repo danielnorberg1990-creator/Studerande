@@ -31,7 +31,7 @@ class Program
                     AddStudent(); // lägg till studerande
                     break;
                 case "3":
-                    EnrollStudent(); // anmäla studerande till kurs
+                    EnrollStudent(); // anmäla studerande till kurs (via kursens Enroll)
                     break;
                 case "4":
                     ShowCourses(); // visa alla kurser
@@ -43,13 +43,7 @@ class Program
                     SaveToFile(); // Sparar till filerna courses.txt och students.txt
                     break;
                 case "7":
-                    RemoveStudentFromCourse(); // ta bort studerande från kurs
-                    break;
-                case "8":
-                    EnrollStudentFromCourseSide(); // anmäl via kursens egen metod Enroll
-                    break;
-                case "9":
-                    RemoveStudentFromCourseSide(); // ta bort via kursens egen metod Remove
+                    RemoveStudentFromCourse(); // ta bort studerande från kurs (via kursens Remove)
                     break;
                 case "0": // Avslutar programmet
                     Console.WriteLine("Programmet avslutas.");
@@ -57,7 +51,7 @@ class Program
                     break;
                 default:
                     //Felhantering om annan siffra utanför switchens menyval anges.
-                    Console.WriteLine("Ogiltigt val. Välj ett nummer mellan 0 och 9.");
+                    Console.WriteLine("Ogiltigt val. Välj ett nummer mellan 0 och 7.");
                     break;
             }
         }
@@ -70,13 +64,11 @@ class Program
         Console.WriteLine("===== STUDERANDEHANTERING =====");
         Console.WriteLine("1. Lägg till en kurs/utbildning");
         Console.WriteLine("2. Lägg till en studerande");
-        Console.WriteLine("3. Anmäl en studerande till en kurs");
+        Console.WriteLine("3. Anmäl en studerande till en kurs (via kursens Enroll)");
         Console.WriteLine("4. Visa alla kurser");
         Console.WriteLine("5. Visa alla studerande");
         Console.WriteLine("6. Spara listor till .txt-filer");
-        Console.WriteLine("7. Ta bort en studerande från en kurs");
-        Console.WriteLine("8. Anmäl en studerande till en kurs (via kursens Enroll)");
-        Console.WriteLine("9. Ta bort en studerande från en kurs (via kursens Remove)");
+        Console.WriteLine("7. Ta bort en studerande från en kurs (via kursens Remove)");
         Console.WriteLine("0. Avsluta");
         Console.Write("Välj: ");
     }
@@ -127,7 +119,7 @@ class Program
         //Felhantering ifall värdet är null eller tomt.
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
         {
-            Console.WriteLine("[Fel] Förnamn och efternamn får inte vara tomt.");
+            Console.WriteLine("[Fel] Förnamn eller efternamn får inte vara tomt.");
             return;
         }
 
@@ -144,7 +136,11 @@ class Program
         Console.WriteLine($"Studerande {firstName} {lastName} ({age} år) har lagts till."); //Bekräftelse att den studerande lagts till.
     }
 
-    // Låter användaren anmäla en studerande till en kurs.
+    // Låter användaren anmäla en studerande till en kurs från kursens håll,
+    // dvs. genom att anropa kursens egen metod Enroll.
+    // Listan visar både de ej anmälda och de redan anmälda till kursen,
+    // så att regeln för dubbelanmälan går att testa.
+    // Om kursen redan är fullsatt visas ett meddelande och man återgår till huvudmenyn.
     static void EnrollStudent()
     {
         // Felhantering om ingen studerande eller kurs valts.
@@ -153,32 +149,88 @@ class Program
             Console.WriteLine("[Fel] Du behöver minst en studerande och en kurs först.");
             return;
         }
-        //Avbryter anmälan för kurs och återgår till huvudmenyn ifall inget val gjorts.
-        Student student = PickStudent();
-        if (student == null) return;
 
+        // Avbryter anmälan och återgår till huvudmenyn ifall inget val gjorts.
         Course course = PickCourse();
         if (course == null) return;
 
-        bool enrolled = student.Join(course); // Enroll hanterar dubbelanmälan och ifall kursen är full.
+        // Felhantering: om kursen är fullsatt kan ingen till anmälas – avbryt och återgå till huvudmenyn.
+        if (course.Students.Count >= course.MaxSeats)
+        {
+            Console.WriteLine("Kursen är fullsatt, ta bort elever om du vill anmäla fler.");
+            return;
+        }
+
+        Student student = PickStudentForEnrollment(course); // Visar både de ej anmälda och de redan anmälda till kursen.
+
+        bool enrolled = course.Enroll(student); // Kursens egen metod – hanterar dubbelanmälan och full kurs.
         if (enrolled)
         {
             Console.WriteLine($"{student.FullName} har anmälts till {course.Name}."); //Bekräftelse på anmälan.
         }
     }
 
-    // Låter användaren ta bort en studerande från en kurs.
-    // Endast studerande som redan är anmälda till kursen visas och går att ta bort.
+    // Lister alla studerande i två grupper – de ej anmälda till kursen först och
+    // de redan anmälda efteråt – så att båda grupperna syns och går att välja.
+    // Returnerar den valda studeranden, eller null om användaren avbryter valet.
+    static Student PickStudentForEnrollment(Course course)
+    {
+        // Dela upp studerandena i de som inte är anmälda och de som redan är anmälda till kursen.
+        List<Student> notEnrolled = new List<Student>();
+        List<Student> alreadyEnrolled = new List<Student>();
+        for (int i = 0; i < students.Count; i++)
+        {
+            if (course.Students.Contains(students[i]))
+            {
+                alreadyEnrolled.Add(students[i]);
+            }
+            else
+            {
+                notEnrolled.Add(students[i]);
+            }
+        }
+
+        // Gemensam lista där de ej anmälda kommer först – numreringen följer denna ordning.
+        List<Student> all = new List<Student>();
+        all.AddRange(notEnrolled);
+        all.AddRange(alreadyEnrolled);
+
+        Console.WriteLine($"Ej anmälda till {course.Name}:");
+        for (int i = 0; i < notEnrolled.Count; i++)
+        {
+            Console.WriteLine($"  {i + 1}. {notEnrolled[i].FullName} ({notEnrolled[i].Age} år)");
+        }
+        if (notEnrolled.Count == 0)
+        {
+            Console.WriteLine("  (inga)");
+        }
+
+        Console.WriteLine($"Redan anmälda till {course.Name}:");
+        for (int i = 0; i < alreadyEnrolled.Count; i++)
+        {
+            Console.WriteLine($"  {notEnrolled.Count + i + 1}. {alreadyEnrolled[i].FullName} ({alreadyEnrolled[i].Age} år)");
+        }
+        if (alreadyEnrolled.Count == 0)
+        {
+            Console.WriteLine("  (inga)");
+        }
+
+        return PickFromList(all, "Välj studerande: ");
+    }
+
+    // Låter användaren ta bort en studerande från en kurs från kursens håll,
+    // dvs. genom att anropa kursens egen metod Remove.
+    // Endast studerande som är anmälda till kursen visas och kan väljas.
     static void RemoveStudentFromCourse()
     {
-        //Felhantering om ingen studerande eller kurs valts.
+        // Felhantering om ingen studerande eller kurs valts.
         if (students.Count == 0 || courses.Count == 0)
         {
             Console.WriteLine("[Fel] Du behöver minst en studerande och en kurs först.");
             return;
         }
 
-        // Återgå till menyn ifall felaktigt val gjorts. Nu kan vilken kurs som helst väljas, även utan studerande.
+        // Återgå till menyn ifall felaktigt val gjorts. Vilken kurs som helst kan väljas, även utan studerande.
         Course course = PickCourse();
         if (course == null) return;
 
@@ -189,82 +241,8 @@ class Program
             return;
         }
 
-        ShowEnrolledIn(course); // Visar endast de som är anmälda till kursen – de övriga döljs.
-        Student student = PickFromList(course.Students, "Välj studerande: "); // Endast de anmälda kan väljas.
-
-        bool removed = student.Leave(course); // Course.Remove avgör om hen var anmäld och tar bort från både kursen och schemat.
-        if (removed)
-        {
-            Console.WriteLine($"{student.FullName} har tagits bort från {course.Name}."); //Bekräftelse på borttag.
-        }
-    }
-
-    // Låter användaren anmäla en studerande till en kurs direkt från kursens håll,
-    // dvs. genom att anropa kursens egen metod Enroll (inte studentens Join).
-    // Endast studerande som ännu inte är anmälda till kursen visas och går att anmäla.
-    static void EnrollStudentFromCourseSide()
-    {
-        // Felhantering om ingen studerande eller kurs finns.
-        if (students.Count == 0 || courses.Count == 0)
-        {
-            Console.WriteLine("[Fel] Du behöver minst en studerande och en kurs först.");
-            return;
-        }
-
-        Course course = PickCourse();
-        if (course == null) return;
-
-        // Samlar de studerande som ännu inte är anmälda till kursen – de redan anmälda döljs.
-        List<Student> notEnrolled = new List<Student>();
-        for (int i = 0; i < students.Count; i++)
-        {
-            if (!course.Students.Contains(students[i]))
-            {
-                notEnrolled.Add(students[i]);
-            }
-        }
-
-        // Om alla studerande redan är anmälda till kursen finns det ingen att anmäla.
-        if (notEnrolled.Count == 0)
-        {
-            Console.WriteLine($"Alla studerande är redan anmälda till {course.Name}.");
-            return;
-        }
-
-        Console.WriteLine($"Studerande ej anmälda till {course.Name}:");
-        for (int i = 0; i < notEnrolled.Count; i++)
-        {
-            Console.WriteLine($"  {i + 1}. {notEnrolled[i].FullName} ({notEnrolled[i].Age} år)");
-        }
-
-        Student student = PickFromList(notEnrolled, "Välj studerande: "); // Endast de ej anmälda kan väljas.
-
-        bool enrolled = course.Enroll(student); // Kursens egen metod – hanterar dubbelanmälan och full kurs.
-        if (enrolled)
-        {
-            Console.WriteLine($"{student.FullName} har anmälts till {course.Name}."); //Bekräftelse på anmälan.
-        }
-    }
-
-    // Låter användaren ta bort en studerande från en kurs direkt från kursens håll,
-    // dvs. genom att anropa kursens egen metod Remove (inte studentens Leave).
-    // Man kan välja vilken som helst studerande – även en som inte är anmäld –
-    // så att man kan prova regeln att borttagning av en ej anmäld studerande inte gör något.
-    static void RemoveStudentFromCourseSide()
-    {
-        // Felhantering om ingen studerande eller kurs finns.
-        if (students.Count == 0 || courses.Count == 0)
-        {
-            Console.WriteLine("[Fel] Du behöver minst en studerande och en kurs först.");
-            return;
-        }
-
-        Course course = PickCourse();
-        if (course == null) return;
-
-        ShowEnrolledIn(course); // Visar vilka som är anmälda till kursen, som information.
-
-        Student student = PickStudent(); // Välj vilken som helst studerande – även en som inte är anmäld till kursen.
+        ShowEnrolledIn(course); // Visar de anmälda numrerat så användaren vet vilken siffra som hör till vilket namn.
+        Student student = PickFromList(course.Students, "Välj studerande: "); // Endast de anmälda till kursen kan väljas.
 
         bool removed = course.Remove(student); // Kursens egen metod – avgör om hen var anmäld.
         if (removed)
