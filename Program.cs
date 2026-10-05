@@ -201,6 +201,7 @@ class Program
 
     // Låter användaren anmäla en studerande till en kurs direkt från kursens håll,
     // dvs. genom att anropa kursens egen metod Enroll (inte studentens Join).
+    // Endast studerande som ännu inte är anmälda till kursen visas och går att anmäla.
     static void EnrollStudentFromCourseSide()
     {
         // Felhantering om ingen studerande eller kurs finns.
@@ -213,8 +214,30 @@ class Program
         Course course = PickCourse();
         if (course == null) return;
 
-        Student student = PickStudent();
-        if (student == null) return;
+        // Samlar de studerande som ännu inte är anmälda till kursen – de redan anmälda döljs.
+        List<Student> notEnrolled = new List<Student>();
+        for (int i = 0; i < students.Count; i++)
+        {
+            if (!course.Students.Contains(students[i]))
+            {
+                notEnrolled.Add(students[i]);
+            }
+        }
+
+        // Om alla studerande redan är anmälda till kursen finns det ingen att anmäla.
+        if (notEnrolled.Count == 0)
+        {
+            Console.WriteLine($"Alla studerande är redan anmälda till {course.Name}.");
+            return;
+        }
+
+        Console.WriteLine($"Studerande ej anmälda till {course.Name}:");
+        for (int i = 0; i < notEnrolled.Count; i++)
+        {
+            Console.WriteLine($"  {i + 1}. {notEnrolled[i].FullName} ({notEnrolled[i].Age} år)");
+        }
+
+        Student student = PickFromList(notEnrolled, "Välj studerande: "); // Endast de ej anmälda kan väljas.
 
         bool enrolled = course.Enroll(student); // Kursens egen metod – hanterar dubbelanmälan och full kurs.
         if (enrolled)
