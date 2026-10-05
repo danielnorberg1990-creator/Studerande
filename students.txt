@@ -5,3 +5,4 @@ Kalle Karlsson | 43 år | Kurser: Matematik 2
 Anna Eriksson | 23 år | Kurser: Ingen kurs
 Bertil Jönsson | 56 år | Kurser: Ingen kurs
 Eva Lind | 40 år | Kurser: Matematik 2
+Kjell Hansson | 34 år | Kurser: Server

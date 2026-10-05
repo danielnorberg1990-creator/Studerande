@@ -20,16 +20,16 @@ public class Student
         Courses = new List<Course>();
     }
 
-    // Metod Join(course) — gå med i en kurs.
-    public void Join(Course course)
+    // Metod Join(course) — gå med i en kurs. Returnerar true om studeranden anmäldes till kursen.
+    public bool Join(Course course)
     {
-        course.Enroll(this);
+        return course.Enroll(this);
     }
 
-    // Metod Leave(course) — lämna en kurs.
-    public void Leave(Course course)
+    // Metod Leave(course) — lämna en kurs. Returnerar true om studeranden togs bort ur kursen.
+    public bool Leave(Course course)
     {
-        course.Remove(this);
+        return course.Remove(this);
     }
 
     // Metod Schedule() — skriver ut vilka kurser den studerande går i schema format.

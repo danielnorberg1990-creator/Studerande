@@ -40,12 +40,19 @@ public class Course
     }
 
     // Metod Remove(student) — tar bort en studerande ur en kurs.
-    public void Remove(Student student)
+    // Returnerar true om studeranden togs bort, false om hen inte var anmäld till kursen.
+    public bool Remove(Student student)
     {
-        if (Students.Remove(student))
+        // Felhantering: en studerande som inte är anmäld till kursen kan inte tas bort.
+        if (!Students.Contains(student))
         {
-            student.Courses.Remove(this); // håll studerandens schema uppdaterat
+            Console.WriteLine($"  [Fel] {student.FullName} är inte anmäld till {Name}.");
+            return false;
         }
+
+        Students.Remove(student);
+        student.Courses.Remove(this); // håll studerandens schema uppdaterat
+        return true;
     }
 
     // Metod RollCall() — skriver ut alla studerande i kursen.
