@@ -1,7 +1,17 @@
-﻿using System;
+﻿// Grundläggande klasser – framför allt Console, som vi använder för att skriva ut menyn
+// och läsa in användarens val i konsolen.
+using System;
+// Generiska datastrukturer – här List<T>, som vi lagrar kurser, studerande och
+// anmälningar i (courses, students, student.Courses, course.Students).
 using System.Collections.Generic;
+// Filhantering – File, StreamReader och StreamWriter används för att ladda in och
+// spara courses.txt respektive students.txt.
 using System.IO;
+// Linq-metoder som förenklar listor – t.ex. .Select(...) i spar-metoderna för att
+// byga ihop kursnamn och studerandens namn till text.
 using System.Linq;
+// Klasser för att bygga text, t.ex. StringBuilder som vi sätter ihop filinnehållet med
+// innan det skrivs till courses.txt/students.txt.
 using System.Text;
 
 
@@ -20,7 +30,7 @@ class Program
         {
             //Menyval som finns och är lagt i en switch för att förenkla kodhanteringen och gränssnittet.
             ShowMenu();
-            string choice = Console.ReadLine();
+            string? choice = Console.ReadLine();
 
             switch (choice)
             {
@@ -64,21 +74,22 @@ class Program
         Console.WriteLine("===== STUDERANDEHANTERING =====");
         Console.WriteLine("1. Lägg till en kurs/utbildning");
         Console.WriteLine("2. Lägg till en studerande");
-        Console.WriteLine("3. Anmäl en studerande till en kurs (via kursens Enroll)");
+        Console.WriteLine("3. Anmäl en studerande till en kurs.");
         Console.WriteLine("4. Visa alla kurser");
         Console.WriteLine("5. Visa alla studerande");
         Console.WriteLine("6. Spara listor till .txt-filer");
-        Console.WriteLine("7. Ta bort en studerande från en kurs (via kursens Remove)");
+        Console.WriteLine("7. Ta bort en studerande från en kurs.");
         Console.WriteLine("0. Avsluta");
         Console.Write("Välj: ");
     }
 
-    // Skapa en kurs manuellt med namn och valfritt antal platser som kursen ska innehålla.
+    // Skapa en kurs manuellt med namn och angivet antal platser som kursen ska innehålla, 
+    // om man inte sätter antalet platser så är standardvärdet 10.
     static void AddCourse()
     {
         //frågar användaren efter namn på kursen som ska skapas.
         Console.Write("Namn på utbildningen: ");
-        string name = Console.ReadLine();
+        string? name = Console.ReadLine();
 
         // felhantering om namnet är tomt eller null.
         if (string.IsNullOrWhiteSpace(name))
@@ -96,8 +107,8 @@ class Program
     // Frågar efter antal platser, om inget värde anges så blir standardvärdet 10.
     static int PromptSeats()
     {
-        Console.Write("Antal platser [10]: ");
-        string input = Console.ReadLine();
+        Console.Write("Antal platser, om inget värde anges eller felaktigt värde så blir värdet 10 standard: ");
+        string? input = Console.ReadLine();
 
         if (string.IsNullOrWhiteSpace(input) || !int.TryParse(input, out int seats) || seats <= 0) // om användaren inte anger något eller om det är ett negativt tal eller en sträng, så blir standardvärdet 10
         {
@@ -111,10 +122,10 @@ class Program
     static void AddStudent()
     {
         Console.Write("Förnamn: ");
-        string firstName = Console.ReadLine();
+        string? firstName = Console.ReadLine();
 
         Console.Write("Efternamn: ");
-        string lastName = Console.ReadLine();
+        string? lastName = Console.ReadLine();
 
         //Felhantering ifall värdet är null eller tomt.
         if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
@@ -154,7 +165,7 @@ class Program
         Course course = PickCourse();
         if (course == null) return;
 
-        // Felhantering: om kursen är fullsatt kan ingen till anmälas – avbryt och återgå till huvudmenyn.
+        // Felhantering: om kursen är fullsatt kan inga fler studenter anmälas – avbryt och återgå till huvudmenyn.
         if (course.Students.Count >= course.MaxSeats)
         {
             Console.WriteLine("Kursen är fullsatt, ta bort elever om du vill anmäla fler.");
@@ -175,7 +186,7 @@ class Program
     // Returnerar den valda studeranden, eller null om användaren avbryter valet.
     static Student PickStudentForEnrollment(Course course)
     {
-        // Dela upp studerandena i de som inte är anmälda och de som redan är anmälda till kursen.
+        // Dela upp studerandena i två kategorier, icke-anmälda och de som redan är anmälda till kursen.
         List<Student> notEnrolled = new List<Student>();
         List<Student> alreadyEnrolled = new List<Student>();
         for (int i = 0; i < students.Count; i++)
@@ -190,7 +201,8 @@ class Program
             }
         }
 
-        // Gemensam lista där de ej anmälda kommer först – numreringen följer denna ordning.
+        // Gemensam lista där de som inte är anmälda kommer först och de som redan är anmälda kommer sist.
+        // numreringen följer denna ordning.
         List<Student> all = new List<Student>();
         all.AddRange(notEnrolled);
         all.AddRange(alreadyEnrolled);
@@ -220,13 +232,14 @@ class Program
 
     // Låter användaren ta bort en studerande från en kurs från kursens håll,
     // dvs. genom att anropa kursens egen metod Remove.
-    // Endast studerande som är anmälda till kursen visas och kan väljas.
+    // Vilken som helst studerande kan väljas – även en som inte är anmäld –
+    // så att regeln att borttagning av en ej anmäld studerande inte gör något går att testa.
     static void RemoveStudentFromCourse()
     {
         // Felhantering om ingen studerande eller kurs valts.
         if (students.Count == 0 || courses.Count == 0)
         {
-            Console.WriteLine("[Fel] Du behöver minst en studerande och en kurs först.");
+            Console.WriteLine("[Fel] Du behöver ange minst en studerande och en kurs först.");
             return;
         }
 
@@ -234,17 +247,11 @@ class Program
         Course course = PickCourse();
         if (course == null) return;
 
-        // Om ingen studerande är anmäld till kursen finns det ingen att ta bort.
-        if (course.Students.Count == 0)
-        {
-            Console.WriteLine($"Inga studerande är anmälda till {course.Name}.");
-            return;
-        }
+        ShowEnrolledIn(course); // Visar vilka som är anmälda till kursen, som information.
 
-        ShowEnrolledIn(course); // Visar de anmälda numrerat så användaren vet vilken siffra som hör till vilket namn.
-        Student student = PickFromList(course.Students, "Välj studerande: "); // Endast de anmälda till kursen kan väljas.
+        Student student = PickStudent(); // Alla studerande kan väljas – även en som inte är anmäld till kursen.
 
-        bool removed = course.Remove(student); // Kursens egen metod – avgör om hen var anmäld.
+        bool removed = course.Remove(student); // Kursens egen metod – avgör om studenten var anmäld.
         if (removed)
         {
             Console.WriteLine($"{student.FullName} har tagits bort från {course.Name}."); //Bekräftelse på borttag.
@@ -298,8 +305,8 @@ class Program
     // Variabeln T är generisk och kan därför innehålla både studerande och courses i detta fall.
     static T PickFromList<T>(List<T> items, string prompt)
     {
-        int count = items.Count; // sparar hu många objekt listan innehåller.
-        int choice;  // deklarerar variabeln choice
+        int count = items.Count; // sparar hur många objekt listan innehåller.
+        int choice;  // deklarerar variabeln choice.
         Console.Write(prompt);
 
         // loop som fortsätter tills användaren gjort ett giltigt val i programmet.
@@ -381,7 +388,7 @@ class Program
 
         foreach (var course in courses)
         {
-            string deltagare = course.Students.Count == 0 // om kursen inte har någon deltagare skrivs "Inga deltagare" ut, annars skrivs fulla namnet på studenten, kursens namn, hur många platser som är tagna samt vilka deltagare i kursen.
+            string deltagare = course.Students.Count == 0 // om kursen inte har någon deltagare skrivs "Inga deltagare" ut, annars skrivs fulla namnet på studenten, kursens namn, hur många platser som är tagna samt av vilka deltagare i kursen.
                 ? "Inga deltagare"
                 : string.Join(", ", course.Students.Select(s => s.FullName));
             sb.AppendLine($"{course.Name} | Platser: {course.Students.Count}/{course.MaxSeats} | Deltagare: {deltagare}");

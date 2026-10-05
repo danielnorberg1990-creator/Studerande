@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-// En studerande med ett namn och en lista med kurser/utbildningar personen går på.
+// En studerande med namn samt en lista med kurser/utbildningar personen går på.
 public class Student
 {
     // Fält: namn, ålder och lista av kurser.

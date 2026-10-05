@@ -35,7 +35,7 @@ public class Course
         }
 
         Students.Add(student);
-        student.Courses.Add(this); // håll studerandens schema uppdaterat
+        student.Courses.Add(this); // håller studerandens schema uppdaterat
         return true;
     }
 
@@ -51,7 +51,7 @@ public class Course
         }
 
         Students.Remove(student);
-        student.Courses.Remove(this); // håll studerandens schema uppdaterat
+        student.Courses.Remove(this); // håller studerandens schema uppdaterat
         return true;
     }
 
